@@ -28,31 +28,31 @@ class VehicleTest extends TestCase
         $clerk = User::factory()->clerk()->create();
         $this->be($clerk);
 
-        $response = $this->postJson(route('vehicle.store'), $vehicleData)->dump();
+        $response = $this->postJson(route('vehicle.store'), $vehicleData);
 
         $this->assertDatabaseHas('vehicles',$vehicleData);
 
         $driver = User::query()->find($vehicleData['driver_id'])->toArray();
 
-        unset($driver['created_at']);
-        unset($driver['updated_at']);
-        unset($driver['deleted_at']);
-        unset($driver['email_verified_at']);
-
-        $response->assertJsonFragment($driver);
+        $response->assertJsonFragment($this->unsetUnnecessaryUserFields($driver));
 
         $owner = User::query()->find($vehicleData['driver_id'])->toArray();
 
-        unset($owner['created_at']);
-        unset($owner['updated_at']);
-        unset($owner['deleted_at']);
-        unset($owner['email_verified_at']);
-
-        $response->assertJsonFragment($owner);
+        $response->assertJsonFragment($this->unsetUnnecessaryUserFields($owner));
 
         unset($vehicleData['driver_id']);
         unset($vehicleData['owner_id']);
 
         $response->assertJsonFragment($vehicleData);
+    }
+
+    private function unsetUnnecessaryUserFields(array $user): array
+    {
+        unset($user['created_at']);
+        unset($user['updated_at']);
+        unset($user['deleted_at']);
+        unset($user['email_verified_at']);
+
+        return $user;
     }
 }
