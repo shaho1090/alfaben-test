@@ -67,7 +67,16 @@ class UserFactory extends Factory
                 'type' => UserTypes::CLERK,
             ];
         });
+
+
     }
 
-
+    public function driver(): UserFactory
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'type' => UserTypes::DRIVER,
+            ];
+        });
+    }
 }
