@@ -6,9 +6,7 @@ use App\Http\Requests\PassengerStoreRequest;
 use App\Http\Resources\PassengerResource;
 use App\InternalServices\Passenger\CreateNewPassenger;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class PassengerController extends Controller
 {
