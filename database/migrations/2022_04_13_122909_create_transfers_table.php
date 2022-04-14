@@ -16,9 +16,9 @@ return new class extends Migration
         Schema::create('transfers', function (Blueprint $table) {
             $table->id();
             $table->date('registered_at');
-            $table->foreignId('registrant_at')->constrained('users');
-            $table->foreignId('preferred_vehicle_id')->constrained('vehicles');
-            $table->foreignId('preferred_driver_id')->constrained('users');
+            $table->foreignId('registrant_id')->constrained('users');
+            $table->foreignId('vehicle_id')->constrained('vehicles');
+            $table->foreignId('driver_id')->constrained('users');
             $table->date('started_at')->nullable();
             $table->date('completed_at')->nullable();
             $table->string('status');
