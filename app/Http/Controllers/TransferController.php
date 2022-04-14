@@ -17,10 +17,13 @@ class TransferController extends Controller
      */
     public function store(TransferStoreRequest $request): JsonResponse
     {
-        try{
-            DB::beginTransaction();;
+        $request = $request->toArray();
+        $request['registrant_id'] = auth()->id();
 
-            $transfer = (new CreateNewTransfer(new Transfer(),$request->toArray()))->handle();
+        try{
+            DB::beginTransaction();
+
+            $transfer = (new CreateNewTransfer(new Transfer(),$request))->handle();
 
             DB::commit();
         }catch (\Exception $ex){
