@@ -8,5 +8,5 @@ use Illuminate\Support\Facades\Route;
 //Route::group(['middleware' => 'auth'], function () {
 
     Route::post('/transfers/store', [TransferController::class, 'store'])
-        ->name('transfers.store');
+        ->name('transfer.store');
 //});
