@@ -17,11 +17,13 @@ class TransferResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'name' => $this->name,
-            'surname' => $this->surname,
-            'phone_number' => $this->phone_number,
-            'email' => $this->email,
-            'type' => $this->type
+            'registered_at' => $this->registered_at,
+            'status' => $this->status,
+            'started_at' => $this->started_at,
+            'completed_at' => $this->completed_at,
+            'vehicle' => new VehicleResource($this->vehicle),
+            'driver' => new DriverResource($this->driver),
+            'locations' =>  TransferLocationResource::collection($this->locations)
         ];
     }
 }
