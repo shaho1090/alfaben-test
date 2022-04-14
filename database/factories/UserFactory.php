@@ -67,8 +67,6 @@ class UserFactory extends Factory
                 'type' => UserTypes::CLERK,
             ];
         });
-
-
     }
 
     public function driver(): UserFactory

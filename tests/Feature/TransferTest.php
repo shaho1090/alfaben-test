@@ -2,7 +2,10 @@
 
 namespace Tests\Feature;
 
+use App\Models\Address;
+use App\Models\Transfer;
 use App\Models\User;
+use App\Models\Vehicle;
 use App\Types\PassengerTypes;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -19,8 +22,8 @@ class TransferTest extends TestCase
         $passengerTypes = (new PassengerTypes())->toArray();
 
         $TransferData = [
-            'preferred_vehicle_id' => $this->faker->name(),
-            'preferred_driver_id' => $this->faker->lastName(),
+            'vehicle_id' => Vehicle::factory()->create()->id,
+            'driver_id' => User::factory()->driver()->create()->id,
             'passengers' => [
                 User::factory()->passenger()->create()->id,
                 User::factory()->passenger()->create()->id,
@@ -49,7 +52,58 @@ class TransferTest extends TestCase
 
         $this->postJson(route('transfer.store'), $TransferData)->dump();
 //            ->assertJsonFragment($TransferData);
-//
-//        $this->assertDatabaseHas('users',$TransferData);
+
+        $this->assertDatabaseHas('transfers', [
+            'registrant_id' => $clerk->id,
+            'vehicle_id' => $TransferData['vehicle_id'],
+            'driver_id' => $TransferData['driver_id'],
+        ]);
+
+        $this->assertDatabaseHas('addresses', [
+            'city' => $TransferData['locations'][0]['city'],
+            'address' => $TransferData['locations'][0]['address'],
+            'latitude' => $TransferData['locations'][0]['latitude'],
+            'longitude' => $TransferData['locations'][0]['longitude']
+        ]);
+
+        $this->assertDatabaseHas('addresses', [
+            'city' => $TransferData['locations'][1]['city'],
+            'address' => $TransferData['locations'][1]['address'],
+            'latitude' => $TransferData['locations'][1]['latitude'],
+            'longitude' => $TransferData['locations'][1]['longitude']
+        ]);
+
+        $this->assertDatabaseHas('transfer_locations', [
+            'transfer_id' => Transfer::first()->id,
+            'address_id' => Address::first()->id,
+            'arriving_time' => null,
+            'leaving_time' => null,
+            'starting_km' => null,
+            'ending_km' => null
+        ]);
+
+        $this->assertDatabaseHas('transfer_locations', [
+            'transfer_id' => Transfer::first()->id,
+            'address_id' => Address::get()->last()->id,
+            'arriving_time' => null,
+            'leaving_time' => null,
+            'starting_km' => null,
+            'ending_km' => null
+        ]);
+
+        $transfer = Transfer::first();
+
+        $this->assertDatabaseHas('transfer_passengers', [
+            'passenger_id' => $TransferData['passengers'][0],
+            'transfer_id' => $transfer->id
+        ]);
+        $this->assertDatabaseHas('transfer_passengers', [
+            'passenger_id' => $TransferData['passengers'][1],
+            'transfer_id' => $transfer->id
+        ]);
+        $this->assertDatabaseHas('transfer_passengers', [
+            'passenger_id' => $TransferData['passengers'][2],
+            'transfer_id' => $transfer->id
+        ]);
     }
 }
